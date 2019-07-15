@@ -1,0 +1,33 @@
+FROM perl:5
+
+ENV PYTHONUNBUFFERED 1
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PERL5LIB /usr/share/perl5
+
+RUN mkdir /code
+WORKDIR /code
+
+RUN apt-get update && apt-get -y install \
+    libnet-ip-perl \
+    libnet-netmask-perl \
+    libnet-dns-perl \
+    libxml-writer-perl \
+    libstring-random-perl \
+    libregexp-ipv6-perl \
+    libhtml-parser-perl \
+    libwww-mechanize-perl \
+    git \
+    python3-pip \
+    python3-setuptools \
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/*
+
+RUN wget http://deb.debian.org/debian/pool/main/libn/libnet-whois-ip-perl/libnet-whois-ip-perl_1.19-2_all.deb \
+ && dpkg -i libnet-whois-ip-perl_1.19-2_all.deb
+
+COPY requirements.txt /code/
+RUN pip3 install -r requirements.txt
+
+RUN git clone https://github.com/fwaeytens/dnsenum.git /code/dnsenum
+
+COPY . /code/

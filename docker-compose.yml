@@ -1,0 +1,34 @@
+version: '3'
+
+services:
+  
+  postgres:
+    hostname: postgres
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+  
+  rabbitmq:
+    hostname: rabbitmq
+    image: rabbitmq:latest
+    ports:
+      - "5672:5672"
+  
+  app:
+    build: .
+    command: bash -c "python /code/manage.py migrate --noinput && python /code/manage.py runserver 0.0.0.0:8000"
+    hostname: app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+      - celery
+
+  celery:
+    build:
+      context: .
+      dockerfile: Dockerfile.celery
+    hostname: celery
+    command: celery -A dnsenum_wrapper worker -l info
+    depends_on:
+      - rabbitmq
