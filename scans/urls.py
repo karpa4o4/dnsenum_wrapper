@@ -1,13 +1,11 @@
-from django.urls import include, path
-from rest_framework import routers
+from django.urls import path
 
 from . import views
 
 app_name = 'scans'
 
-router = routers.DefaultRouter()
-router.register('scans', views.ScanViewSet, base_name='scans')
-
 urlpatterns = [
-    path('', include(router.urls)),
+    path('start_scan/', views.ScanStartView.as_view()),
+    path('get_status/<pk>/', views.ScanGetStatusView.as_view()),
+    path('get_result/<pk>/', views.ScanGetResultView.as_view()),
 ]

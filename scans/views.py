@@ -1,30 +1,24 @@
-from django.shortcuts import get_object_or_404
-from rest_framework.decorators import action
+from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import viewsets
+from rest_framework.generics import RetrieveAPIView
 
 from .models import Scan
-from .serializers import ScanSerializer
+from .serializers import ScanStartSerializer, ScanGetStatusSerializer, ScanGetResultSerializer
 from .tasks import start_domain_scan
 
-class ScanViewSet(viewsets.ViewSet):
-    @action(detail=False, methods=['post'])
-    def start_scan(self, request):
-        if 'domain' in request.POST and request.POST['domain']:
+class ScanStartView(APIView):
+    def post(self, request):
+        if 'domain' in request.POST:
             scan = Scan.objects.create()
             start_domain_scan.delay(scan.id, request.POST['domain'])
-            serializer = ScanSerializer(scan)
-            return Response({'scan_id': serializer.data['id']})
+            serializer = ScanStartSerializer(scan)
+            return Response(serializer.data)
         return Response(status=452)
 
-    @action(detail=True, methods=['get'])
-    def get_status(self, request, pk=None):
-        scan = get_object_or_404(Scan, id=pk)
-        serializer = ScanSerializer(scan)
-        return Response({'scan_status': serializer.data['status']})
+class ScanGetStatusView(RetrieveAPIView):
+    queryset = Scan.objects.all()
+    serializer_class = ScanGetStatusSerializer
 
-    @action(detail=True, methods=['get'])
-    def get_result(self, request, pk=None):
-        scan = get_object_or_404(Scan, id=pk)
-        serializer = ScanSerializer(scan)
-        return Response({'scan_result': '' if serializer.data['result'] is None else serializer.data['result'] })
+class ScanGetResultView(RetrieveAPIView):
+    queryset = Scan.objects.all()
+    serializer_class = ScanGetResultSerializer

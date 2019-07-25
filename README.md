@@ -1,4 +1,4 @@
-# dnsenum_wrapper
+# Dnsenum wrapper
 
 #### API methods
 
@@ -8,9 +8,9 @@
   ```
 * Get scan status
   ```
-  curl http://0.0.0.0:8000/api/scans/<pk>/get_status/
+  curl http://0.0.0.0:8000/api/scans/get_status/<pk>/
   ```
 * Get scan result
   ```
-  curl http://0.0.0.0:8000/api/scans/<pk>/get_result/
+  curl http://0.0.0.0:8000/api/scans/get_result/<pk>/
   ```

@@ -8,6 +8,7 @@ RUN mkdir /code
 WORKDIR /code
 
 RUN apt-get update && apt-get -y install \
+    git \
     libnet-ip-perl \
     libnet-netmask-perl \
     libnet-dns-perl \
@@ -16,7 +17,6 @@ RUN apt-get update && apt-get -y install \
     libregexp-ipv6-perl \
     libhtml-parser-perl \
     libwww-mechanize-perl \
-    git \
     python3-pip \
     python3-setuptools \
  && apt-get clean \
